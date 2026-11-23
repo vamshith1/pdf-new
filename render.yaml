@@ -1,0 +1,16 @@
+# Render Blueprint: Dashboard -> New -> Blueprint -> pick this repo -> Apply.
+services:
+  - type: web
+    name: pdf-new
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: JOB_WORKERS
+        value: "1"          # free tier has 512 MB RAM
+      - key: MAX_FILE_SIZE
+        value: 50MB
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://pdf-new.onrender.com

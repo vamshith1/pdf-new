@@ -1,0 +1,14 @@
+# Java
+backend/target/
+backend/data/
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/public/pdf.worker.min.mjs
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+# Misc
+.env*.local
+.DS_Store
+*.log

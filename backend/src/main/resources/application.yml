@@ -1,0 +1,60 @@
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+  # Behind Render/other proxies: honour X-Forwarded-* headers
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+spring:
+  application:
+    name: pdf-new
+  threads:
+    virtual:
+      enabled: true
+  servlet:
+    multipart:
+      # Hard ceiling enforced by the servlet container; app.limits gives friendlier per-file checks
+      max-file-size: ${MAX_FILE_SIZE:50MB}
+      max-request-size: ${MAX_REQUEST_SIZE:105MB}
+      file-size-threshold: 1MB
+
+app:
+  storage:
+    dir: ${STORAGE_DIR:./data/jobs}
+    ttl: ${FILE_TTL:60m}
+  jobs:
+    workers: ${JOB_WORKERS:2}
+    queue-capacity: ${JOB_QUEUE:20}
+  limits:
+    max-file-size: ${MAX_FILE_SIZE:50MB}
+    max-total-size: ${MAX_TOTAL_SIZE:100MB}
+    max-files: ${MAX_FILES:20}
+    max-render-pages: 100
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    jobs-per-minute: ${RATE_LIMIT_PER_MINUTE:30}
+  # Only needed when the frontend runs on another origin (e.g. Next.js dev server without proxy)
+  cors-origins: ${CORS_ORIGINS:}
+  trust-proxy: ${TRUST_PROXY:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /api/openapi.json
+  swagger-ui:
+    path: /api/docs
+
+logging:
+  level:
+    org.apache.pdfbox: WARN
+    org.apache.fontbox: WARN
