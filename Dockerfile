@@ -20,16 +20,24 @@ COPY backend/src ./src
 COPY --from=web /web/out ./src/main/resources/static
 RUN mvn -q -B package -DskipTests
 
-# 3) Small runtime image
-FROM eclipse-temurin:21-jre-alpine
-# Fonts for rendering PDF pages to images (PDF to JPG) on a minimal OS
-RUN apk add --no-cache fontconfig ttf-dejavu \
-    && addgroup -S app && adduser -S app -G app && mkdir -p /data && chown app:app /data
+# 3) Runtime image (Ubuntu) with the document engines:
+#    LibreOffice (Word/Excel/PowerPoint <-> PDF) and Tesseract (OCR), plus fonts
+#    metric-compatible with Microsoft's (Liberation, Carlito, Caladea) so layouts stay put.
+FROM eclipse-temurin:21-jre
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libreoffice-writer-nogui libreoffice-calc-nogui libreoffice-impress-nogui libreoffice-draw-nogui \
+       tesseract-ocr tesseract-ocr-eng tesseract-ocr-hin \
+       fontconfig fonts-dejavu-core fonts-liberation2 fonts-crosextra-carlito fonts-crosextra-caladea \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --system --create-home app && mkdir -p /data && chown app:app /data
 USER app
 WORKDIR /app
 COPY --from=api /api/target/pdf-new.jar app.jar
+# LibreOffice runs beside the JVM, so the JVM gets less of the (512 MB free-tier) memory.
 ENV STORAGE_DIR=/data/jobs \
     TRUST_PROXY=true \
-    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k"
+    HOME=/home/app \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=45 -XX:+UseSerialGC -Xss512k"
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

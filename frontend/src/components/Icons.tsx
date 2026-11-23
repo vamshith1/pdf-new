@@ -51,5 +51,23 @@ export function ToolGlyph({ slug, ...p }: P & { slug: ToolSlug }) {
       return (<svg {...base(p)}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2" /></svg>);
     case "unlock-pdf":
       return (<svg {...base(p)}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 7.5-2M12 15v2" /></svg>);
+    case "word-to-pdf":
+      return (<svg {...base(p)}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" /><path d="m8.5 11 1.3 6 1.7-4.5 1.7 4.5 1.3-6" /></svg>);
+    case "excel-to-pdf":
+      return (<svg {...base(p)}><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M4 10h16M4 15h16M10 4v16" /></svg>);
+    case "powerpoint-to-pdf":
+      return (<svg {...base(p)}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M12 16v4M8 20h8M9 12V8h2.5a1.5 1.5 0 0 1 0 3H9" /></svg>);
+    case "pdf-to-word":
+      return (<svg {...base(p)}><path d="M4 12h8m0 0-3-3m3 3-3 3" /><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" /></svg>);
+    case "pdf-to-text":
+      return (<svg {...base(p)}><path d="M5 6h14M5 10h14M5 14h10M5 18h7" /></svg>);
+    case "extract-images":
+      return (<svg {...base(p)}><rect x="3" y="3" width="13" height="13" rx="2" /><path d="m3 13 4-4 4 4M20 8v12H8" /></svg>);
+    case "ocr-pdf":
+      return (<svg {...base(p)}><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" /><path d="M8 10h8M8 14h5" /></svg>);
+    case "watermark-pdf":
+      return (<svg {...base(p)}><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z" /></svg>);
+    case "add-page-numbers":
+      return (<svg {...base(p)}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" /><path d="M11 13h1.5v5M10.5 18h4" /></svg>);
   }
 }

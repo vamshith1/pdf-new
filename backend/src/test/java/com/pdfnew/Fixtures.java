@@ -41,6 +41,41 @@ public final class Fixtures {
         }
     }
 
+    /** Pages containing the text "Hello page N" (Helvetica), optionally with /Rotate set. */
+    public static byte[] textPdf(int pages, int rotation) throws IOException {
+        try (PDDocument doc = new PDDocument()) {
+            var font = new org.apache.pdfbox.pdmodel.font.PDType1Font(
+                    org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName.HELVETICA);
+            for (int i = 1; i <= pages; i++) {
+                PDPage page = new PDPage(PDRectangle.A4);
+                page.setRotation(rotation);
+                doc.addPage(page);
+                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                    cs.beginText();
+                    cs.setFont(font, 14);
+                    cs.newLineAtOffset(72, 700);
+                    cs.showText("Hello page " + i);
+                    cs.endText();
+                }
+            }
+            return bytes(doc);
+        }
+    }
+
+    /** Extracted text of each page. */
+    public static List<String> pageTexts(byte[] pdf) throws IOException {
+        try (PDDocument doc = load(pdf)) {
+            List<String> list = new ArrayList<>();
+            var stripper = new org.apache.pdfbox.text.PDFTextStripper();
+            for (int p = 1; p <= doc.getNumberOfPages(); p++) {
+                stripper.setStartPage(p);
+                stripper.setEndPage(p);
+                list.add(stripper.getText(doc));
+            }
+            return list;
+        }
+    }
+
     /** One page with a large, noisy, losslessly stored image: very compressible. */
     public static byte[] photoPdf() throws IOException {
         return photoPdf(false);

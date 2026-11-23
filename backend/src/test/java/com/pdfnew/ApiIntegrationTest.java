@@ -44,6 +44,8 @@ class ApiIntegrationTest {
         storage = Files.createTempDirectory("pdfnew-test");
         registry.add("app.storage.dir", storage::toString);
         registry.add("app.rate-limit.jobs-per-minute", () -> "1000");
+        registry.add("app.office.binary", () -> "no-such-soffice-binary");
+        registry.add("app.ocr.binary", () -> "no-such-tesseract-binary");
     }
 
     @Autowired
@@ -238,6 +240,76 @@ class ApiIntegrationTest {
         }
     }
 
+    // ------------------------------------------------------- phase 2 tools
+
+    @Test
+    void watermarkAddsTextToSelectedPages() throws Exception {
+        String body = run(job("watermark", pdf("doc.pdf", Fixtures.textPdf(3, 0))),
+                Map.of("text", "CONFIDENTIAL", "pages", "1-2", "layout", "diagonal"));
+        assertThat((String) JsonPath.read(body, "$.result.filename")).isEqualTo("doc_watermarked.pdf");
+        byte[] out = mvc.perform(get((String) JsonPath.read(body, "$.result.downloadUrl"))).andReturn().getResponse()
+                .getContentAsByteArray();
+        // Diagonal text is extracted in fragments, so compare without whitespace
+        List<String> texts = Fixtures.pageTexts(out).stream().map(t -> t.replaceAll("\\s+", "")).toList();
+        assertThat(texts.get(0)).contains("CONFIDENTIAL").contains("Hellopage1");
+        assertThat(texts.get(1)).contains("CONFIDENTIAL");
+        assertThat(texts.get(2)).doesNotContain("CONFIDENTIAL");
+    }
+
+    @Test
+    void watermarkRequiresTextAndRejectsUnsupportedCharacters() throws Exception {
+        String empty = run(job("watermark", pdf("doc.pdf", Fixtures.textPdf(1, 0))), Map.of());
+        assertThat((String) JsonPath.read(empty, "$.error")).isEqualTo("Type the watermark text.");
+        String hindi = run(job("watermark", pdf("doc.pdf", Fixtures.textPdf(1, 0))), Map.of("text", "गोपनीय"));
+        assertThat((String) JsonPath.read(hindi, "$.error")).contains("aren't supported yet");
+    }
+
+    @Test
+    void pageNumbersCountSelectedPagesAndHandleRotation() throws Exception {
+        byte[] out = runAndDownload(job("page-numbers", pdf("doc.pdf", Fixtures.textPdf(3, 90))),
+                Map.of("format", "of", "position", "bottom-right", "pages", "2-", "start", "1"));
+        List<String> texts = Fixtures.pageTexts(out);
+        assertThat(texts.get(0)).doesNotContain("Page");
+        assertThat(texts.get(1)).contains("Page 1 of 2");
+        assertThat(texts.get(2)).contains("Page 2 of 2");
+    }
+
+    @Test
+    void pdfToTextReturnsTxtWithPageHeadings() throws Exception {
+        String body = run(job("pdf-to-text", pdf("notes.pdf", Fixtures.textPdf(2, 0))), Map.of());
+        assertThat((String) JsonPath.read(body, "$.result.filename")).isEqualTo("notes.txt");
+        String text = mvc.perform(get((String) JsonPath.read(body, "$.result.downloadUrl"))).andReturn().getResponse()
+                .getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+        assertThat(text).contains("----- Page 1 -----").contains("Hello page 1").contains("Hello page 2");
+
+        String scanned = run(job("pdf-to-text", pdf("scan.pdf", Fixtures.pdf(1))), Map.of());
+        assertThat((String) JsonPath.read(scanned, "$.error")).contains("OCR PDF first");
+    }
+
+    @Test
+    void extractImagesFindsEmbeddedImages() throws Exception {
+        String body = run(job("extract-images", pdf("photos.pdf", Fixtures.photoPdf())), Map.of());
+        assertThat((int) JsonPath.read(body, "$.result.stats.images")).isEqualTo(1);
+        assertThat((String) JsonPath.read(body, "$.result.filename")).isEqualTo("photos_page1_1.png");
+
+        String none = run(job("extract-images", pdf("blank.pdf", Fixtures.pdf(2))), Map.of());
+        assertThat((String) JsonPath.read(none, "$.error")).isEqualTo("No images found in this PDF.");
+    }
+
+    @Test
+    void officeAndOcrToolsExplainWhenTheEngineIsMissing() throws Exception {
+        // The test profile points both engines at programs that don't exist
+        String office = run(job("office-to-pdf",
+                new MockMultipartFile("files", "report.docx", "application/octet-stream", new byte[]{1, 2, 3})), Map.of());
+        assertThat((String) JsonPath.read(office, "$.error")).contains("isn't available on this server");
+
+        String ocr = run(job("ocr", pdf("scan.pdf", Fixtures.pdf(1))), Map.of());
+        assertThat((String) JsonPath.read(ocr, "$.error")).contains("isn't available on this server");
+
+        mvc.perform(job("office-to-pdf", new MockMultipartFile("files", "virus.exe", "application/octet-stream", new byte[]{1})))
+                .andExpect(status().isBadRequest());
+    }
+
     // ------------------------------------------------------------- validation
 
     @Test
@@ -292,7 +364,7 @@ class ApiIntegrationTest {
     void unknownJobIs404AndMetaEndpointsWork() throws Exception {
         mvc.perform(get("/api/v1/jobs/does-not-exist")).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value("This file has expired or doesn't exist."));
-        mvc.perform(get("/api/v1/tools")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(9));
+        mvc.perform(get("/api/v1/tools")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(16));
         mvc.perform(get("/api/v1/limits")).andExpect(jsonPath("$.fileTtlMinutes").value(60));
         mvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }

@@ -58,7 +58,7 @@ export default function AllToolsMenu() {
           id={menuId}
           className="animate-rise absolute inset-x-3 top-[4.25rem] z-40 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-border bg-surface p-5 shadow-2xl md:inset-x-auto md:top-12 md:right-0 md:w-[min(46rem,calc(100vw-2rem))]"
         >
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {groups.map((g) => (
               <div key={g}>
                 <p className="mb-2 flex items-center gap-2 text-xs font-bold tracking-wider text-muted uppercase">

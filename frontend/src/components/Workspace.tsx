@@ -14,7 +14,7 @@ import FileGrid, { type FileItem } from "./FileGrid";
 import { AlertIcon, ArrowRightIcon, CheckIcon, ClockIcon, DownloadIcon, RotateCcwIcon, RotateCwIcon, ShieldIcon, TrashIcon } from "./Icons";
 import PageGrid, { type PageItem } from "./PageGrid";
 import { ToolTile } from "./ToolCard";
-import ToolOptions, { defaultOptions, toApiOptions, validate, type Options } from "./ToolOptions";
+import ToolOptions, { defaultOptions, noOptionsText, toApiOptions, validate, type Options } from "./ToolOptions";
 import { Button, Spinner } from "./ui";
 
 type Phase =
@@ -55,9 +55,15 @@ export default function Workspace({ tool }: { tool: Tool }) {
       setPhase({ name: "edit" });
 
       for (const item of newItems) {
-        if (item.file.type.startsWith("image/") || !item.file.name.toLowerCase().endsWith(".pdf")) {
+        const lower = item.file.name.toLowerCase();
+        if (item.file.type.startsWith("image/")) {
           const thumb = URL.createObjectURL(item.file);
           setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, thumb } : p)));
+          continue;
+        }
+        if (!lower.endsWith(".pdf")) {
+          // Word/Excel/PowerPoint: no preview, show a document icon with the file type
+          setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, docType: lower.split(".").pop()?.toUpperCase() } : p)));
           continue;
         }
         openPdf(item.file)
@@ -290,7 +296,9 @@ export default function Workspace({ tool }: { tool: Tool }) {
               <h2 className="text-lg font-semibold">{tool.name}</h2>
             </div>
             <div className="mt-5">
-              {hasOptions ? (
+              {noOptionsText[tool.slug] ? (
+                <p className="text-sm leading-relaxed text-muted">{noOptionsText[tool.slug]}</p>
+              ) : hasOptions ? (
                 <ToolOptions slug={tool.slug} options={options} set={(patch) => setOptions((o) => ({ ...o, ...patch }))} pageCount={pageCount} />
               ) : (
                 <SummaryText tool={tool} items={items} pages={pages} />
@@ -437,6 +445,27 @@ function Result({
   } else if (tool.slug === "organize-pdf") {
     headline = "Your PDF has been reorganised";
     detail = `${stats.pages} pages${Number(stats.removed) ? `, ${stats.removed} removed` : ""}`;
+  } else if (tool.slug === "watermark-pdf") {
+    headline = "Your watermark has been added";
+    detail = `${stats.pages} ${Number(stats.pages) === 1 ? "page" : "pages"}`;
+  } else if (tool.slug === "add-page-numbers") {
+    headline = "Your pages are numbered";
+    detail = `${stats.pages} ${Number(stats.pages) === 1 ? "page" : "pages"} numbered`;
+  } else if (tool.slug === "pdf-to-text") {
+    headline = "Your text is ready";
+    detail = `${Number(stats.words).toLocaleString()} words from ${stats.pages} pages`;
+  } else if (tool.slug === "extract-images") {
+    headline = "Your images are ready";
+    detail = `${stats.images} ${Number(stats.images) === 1 ? "image" : "images"} found`;
+  } else if (tool.slug === "pdf-to-word") {
+    headline = "Your Word document is ready";
+    detail = "Open it in Word, Google Docs or LibreOffice to edit.";
+  } else if (tool.slug === "ocr-pdf") {
+    headline = "Your PDF is now searchable";
+    detail = `Text recognised on ${stats.pages} ${Number(stats.pages) === 1 ? "page" : "pages"}`;
+  } else if (tool.apiId === "office-to-pdf") {
+    headline = "Your PDF is ready";
+    detail = `${stats.pages} ${Number(stats.pages) === 1 ? "page" : "pages"}`;
   }
 
   return (
@@ -455,7 +484,7 @@ function Result({
               download={result.filename}
               className="mt-8 inline-flex h-14 items-center gap-3 rounded-2xl bg-accent px-8 text-lg font-semibold text-white shadow-md transition-colors hover:bg-accent-hover"
             >
-              <DownloadIcon /> Download {isPdf ? "PDF" : result.filename.endsWith(".zip") ? "ZIP" : "file"}
+              <DownloadIcon /> Download {(result.filename.split(".").pop() ?? "file").toUpperCase().replace("JPEG", "JPG")}
             </a>
             <p className="mt-3 truncate text-sm text-muted">{result.filename} · {formatBytes(result.size)}</p>
           </>

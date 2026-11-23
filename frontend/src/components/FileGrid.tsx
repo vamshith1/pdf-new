@@ -12,6 +12,8 @@ export interface FileItem {
   pages?: number;
   locked?: boolean;
   unreadable?: boolean;
+  /** Set for documents that can't be previewed (DOCX, XLSX…): the file type label. */
+  docType?: string;
 }
 
 /** Uploaded files as cards. Drag (or use the arrows) to reorder when order matters. */
@@ -66,6 +68,11 @@ export default function FileGrid({
               <img src={item.thumb} alt="" className="max-h-full max-w-full object-contain shadow-sm" draggable={false} />
             ) : item.locked ? (
               <LockIcon width={36} height={36} className="text-muted" />
+            ) : item.docType ? (
+              <span className="flex flex-col items-center gap-2 text-muted">
+                <FileIcon width={44} height={44} />
+                <span className="rounded-md bg-accent px-2 py-0.5 text-xs font-bold text-white">{item.docType}</span>
+              </span>
             ) : item.unreadable ? (
               <FileIcon width={36} height={36} className="text-muted" />
             ) : (

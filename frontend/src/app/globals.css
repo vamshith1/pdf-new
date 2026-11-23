@@ -19,6 +19,7 @@
   --cat-organize: #e5322d;
   --cat-optimize: #0f9d84;
   --cat-convert: #e8790c;
+  --cat-edit: #8e4ec6;
   --cat-security: #3e63dd;
   --hero: linear-gradient(180deg, #fff3f2 0%, #ffffff 100%);
   --shadow: 0 1px 2px rgb(20 20 40 / 0.05), 0 6px 20px rgb(20 20 40 / 0.06);
@@ -42,6 +43,7 @@
   --cat-organize: #ff5a4f;
   --cat-optimize: #2fd3b4;
   --cat-convert: #ffa043;
+  --cat-edit: #c49bff;
   --cat-security: #7b97ff;
   --hero: linear-gradient(180deg, #24161a 0%, #121215 100%);
   --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.3);

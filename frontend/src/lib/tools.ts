@@ -1,6 +1,6 @@
 // Catalogue of tools: drives the home page grid, the tool pages, SEO text and the API call.
 
-export type Category = "organize" | "optimize" | "convert" | "security";
+export type Category = "organize" | "optimize" | "convert" | "edit" | "security";
 
 export type ToolSlug =
   | "merge-pdf"
@@ -11,7 +11,16 @@ export type ToolSlug =
   | "jpg-to-pdf"
   | "pdf-to-jpg"
   | "protect-pdf"
-  | "unlock-pdf";
+  | "unlock-pdf"
+  | "watermark-pdf"
+  | "add-page-numbers"
+  | "pdf-to-text"
+  | "extract-images"
+  | "word-to-pdf"
+  | "excel-to-pdf"
+  | "powerpoint-to-pdf"
+  | "pdf-to-word"
+  | "ocr-pdf";
 
 export interface Tool {
   slug: ToolSlug;
@@ -45,6 +54,7 @@ export const categories: Record<Category, { label: string; color: string }> = {
   organize: { label: "Organize", color: "var(--cat-organize)" },
   optimize: { label: "Optimize", color: "var(--cat-optimize)" },
   convert: { label: "Convert", color: "var(--cat-convert)" },
+  edit: { label: "Edit", color: "var(--cat-edit)" },
   security: { label: "Security", color: "var(--cat-security)" },
 };
 
@@ -250,6 +260,203 @@ export const tools: Tool[] = [
     ],
     seoTitle: "Unlock PDF – Remove a PDF password",
     seoDescription: "Remove passwords and restrictions from PDFs you have access to. Free and private.",
+  },
+  {
+    slug: "word-to-pdf",
+    apiId: "office-to-pdf",
+    name: "Word to PDF",
+    summary: "Turn DOC and DOCX documents into PDFs that look the same everywhere.",
+    heading: "Word to PDF",
+    subheading: "Convert Word documents (DOC, DOCX, ODT, RTF) to PDF.",
+    category: "convert",
+    accept: ".doc,.docx,.odt,.rtf,.txt",
+    acceptLabel: "a Word document (DOC, DOCX, ODT, RTF)",
+    multiple: false,
+    minFiles: 1,
+    action: "Convert to PDF",
+    next: ["compress-pdf", "merge-pdf", "protect-pdf"],
+    steps: ["Choose a Word document.", "Click Convert to PDF.", "Download your PDF."],
+    faq: [
+      { q: "Will my formatting be kept?", a: "Text, tables, images and page layout are kept. Uncommon fonts may be replaced by a similar font." },
+      { q: "Can I convert password-protected documents?", a: "No. Remove the password in Word first, then convert." },
+    ],
+    seoTitle: "Word to PDF – Convert DOC and DOCX to PDF online",
+    seoDescription: "Convert Word documents to PDF for free. Keeps your layout, no sign-up.",
+  },
+  {
+    slug: "excel-to-pdf",
+    apiId: "office-to-pdf",
+    name: "Excel to PDF",
+    summary: "Turn spreadsheets into PDFs, ready to share or print.",
+    heading: "Excel to PDF",
+    subheading: "Convert spreadsheets (XLS, XLSX, ODS, CSV) to PDF.",
+    category: "convert",
+    accept: ".xls,.xlsx,.ods,.csv",
+    acceptLabel: "a spreadsheet (XLS, XLSX, ODS, CSV)",
+    multiple: false,
+    minFiles: 1,
+    action: "Convert to PDF",
+    next: ["compress-pdf", "merge-pdf", "add-page-numbers"],
+    steps: ["Choose a spreadsheet.", "Click Convert to PDF.", "Download your PDF. Each sheet becomes one or more pages."],
+    faq: [
+      { q: "Are all sheets converted?", a: "Yes. Every sheet is included, in order." },
+      { q: "My wide table is split across pages. Why?", a: "The PDF follows the print settings saved in the spreadsheet. Set the print area or fit-to-page in Excel first for best results." },
+    ],
+    seoTitle: "Excel to PDF – Convert XLS and XLSX to PDF online",
+    seoDescription: "Convert Excel spreadsheets to PDF for free. No sign-up, files deleted automatically.",
+  },
+  {
+    slug: "powerpoint-to-pdf",
+    apiId: "office-to-pdf",
+    name: "PowerPoint to PDF",
+    summary: "Turn presentations into PDFs, one slide per page.",
+    heading: "PowerPoint to PDF",
+    subheading: "Convert presentations (PPT, PPTX, ODP) to PDF.",
+    category: "convert",
+    accept: ".ppt,.pptx,.odp",
+    acceptLabel: "a presentation (PPT, PPTX, ODP)",
+    multiple: false,
+    minFiles: 1,
+    action: "Convert to PDF",
+    next: ["compress-pdf", "merge-pdf", "watermark-pdf"],
+    steps: ["Choose a presentation.", "Click Convert to PDF.", "Download your PDF with one slide per page."],
+    faq: [
+      { q: "Are animations kept?", a: "No. A PDF shows each slide as a still page, which is ideal for sharing and printing." },
+    ],
+    seoTitle: "PowerPoint to PDF – Convert PPT and PPTX to PDF",
+    seoDescription: "Convert PowerPoint presentations to PDF for free, one slide per page.",
+  },
+  {
+    slug: "pdf-to-word",
+    apiId: "pdf-to-word",
+    name: "PDF to Word",
+    summary: "Turn a PDF into an editable Word document.",
+    heading: "PDF to Word",
+    subheading: "Convert a PDF to an editable DOCX file.",
+    category: "convert",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Convert to Word",
+    next: [],
+    steps: ["Choose a PDF (up to 60 pages).", "Click Convert to Word.", "Download the DOCX file and edit it in Word."],
+    faq: [
+      { q: "Will the Word file look exactly like the PDF?", a: "Text and images are kept and editable. Complex layouts with many columns may shift a little." },
+      { q: "My scanned PDF gives an empty document.", a: "Scans are pictures of text. Run OCR PDF first, then convert the result to Word." },
+    ],
+    seoTitle: "PDF to Word – Convert PDF to editable DOCX",
+    seoDescription: "Convert PDF files to editable Word documents for free. No sign-up.",
+  },
+  {
+    slug: "pdf-to-text",
+    apiId: "pdf-to-text",
+    name: "PDF to Text",
+    summary: "Copy all the text out of a PDF into a plain .txt file.",
+    heading: "PDF to Text",
+    subheading: "Extract all text from a PDF, page by page.",
+    category: "convert",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Extract text",
+    next: [],
+    steps: ["Choose a PDF.", "Click Extract text.", "Download a .txt file with a heading for each page."],
+    faq: [
+      { q: "Why is my text file empty?", a: "Scanned PDFs contain pictures of text, not real text. Run OCR PDF first." },
+    ],
+    seoTitle: "PDF to Text – Extract text from a PDF",
+    seoDescription: "Extract all text from a PDF into a plain text file. Free and private.",
+  },
+  {
+    slug: "extract-images",
+    apiId: "extract-images",
+    name: "Extract images",
+    summary: "Save every picture inside a PDF in its original quality.",
+    heading: "Extract images from PDF",
+    subheading: "Get all the images out of a PDF, at their original quality.",
+    category: "convert",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Extract images",
+    next: [],
+    steps: ["Choose a PDF.", "Click Extract images.", "Download the images (a ZIP if there are several)."],
+    faq: [
+      { q: "Is this different from PDF to JPG?", a: "Yes. PDF to JPG takes a picture of each whole page. Extract images saves the photos inside the PDF, at their original resolution." },
+      { q: "Some tiny images are missing.", a: "Icons smaller than 32 pixels and repeated images are skipped." },
+    ],
+    seoTitle: "Extract images from PDF – Save PDF pictures",
+    seoDescription: "Save all images from a PDF at original quality. Free, no sign-up.",
+  },
+  {
+    slug: "ocr-pdf",
+    apiId: "ocr",
+    name: "OCR PDF",
+    summary: "Make scanned PDFs searchable, so you can select and copy the text.",
+    heading: "OCR PDF",
+    subheading: "Recognise text in scanned PDFs so it can be searched and copied.",
+    category: "optimize",
+    accept: PDF,
+    acceptLabel: "a scanned PDF",
+    multiple: false,
+    minFiles: 1,
+    action: "Recognise text",
+    next: ["pdf-to-word", "pdf-to-text", "compress-pdf"],
+    steps: ["Choose a scanned PDF (up to 30 pages).", "Pick the document's language.", "Download a searchable PDF."],
+    faq: [
+      { q: "What does OCR do?", a: "It reads the letters on a scanned page and adds an invisible text layer, so you can search, select and copy the text. The page still looks the same." },
+      { q: "How long does it take?", a: "Roughly 5–15 seconds per page." },
+      { q: "Which languages are supported?", a: "English, and Hindi together with English." },
+    ],
+    seoTitle: "OCR PDF – Make scanned PDFs searchable",
+    seoDescription: "Turn scanned PDFs into searchable, selectable text with free online OCR.",
+  },
+  {
+    slug: "watermark-pdf",
+    apiId: "watermark",
+    name: "Watermark",
+    summary: "Stamp text like CONFIDENTIAL or DRAFT across your pages.",
+    heading: "Add a watermark to PDF",
+    subheading: "Stamp text across your pages, diagonally or straight.",
+    category: "edit",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Add watermark",
+    next: ["protect-pdf", "compress-pdf"],
+    steps: ["Choose a PDF.", "Type the watermark text and pick the style.", "Download the watermarked PDF."],
+    faq: [
+      { q: "Can the watermark be removed?", a: "It becomes part of the page, so it can't simply be deleted in a PDF reader. Combine it with Protect PDF for extra safety." },
+      { q: "Which characters can I use?", a: "Letters, numbers and common symbols. Other alphabets aren't supported yet." },
+    ],
+    seoTitle: "Watermark PDF – Add a text watermark to PDF",
+    seoDescription: "Add a CONFIDENTIAL or DRAFT text watermark to PDF pages. Free, no sign-up.",
+  },
+  {
+    slug: "add-page-numbers",
+    apiId: "page-numbers",
+    name: "Page numbers",
+    summary: "Number your pages, with the position and style you choose.",
+    heading: "Add page numbers to PDF",
+    subheading: "Number your pages in a corner or the centre, top or bottom.",
+    category: "edit",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Add page numbers",
+    next: ["compress-pdf", "protect-pdf"],
+    steps: ["Choose a PDF.", "Pick where the numbers go and how they look.", "Download your numbered PDF."],
+    faq: [
+      { q: "Can I skip the cover page?", a: "Yes. Turn on Skip first page and numbering starts on page 2." },
+      { q: "Can I start from a number other than 1?", a: "Yes. Set the first number to anything you like." },
+    ],
+    seoTitle: "Add page numbers to PDF – Number PDF pages",
+    seoDescription: "Add page numbers to a PDF in seconds. Choose position and format. Free.",
   },
 ];
 
