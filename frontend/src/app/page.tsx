@@ -1,7 +1,5 @@
-import Link from "next/link";
-import ToolCard from "@/components/ToolCard";
+import ToolGrid from "@/components/ToolGrid";
 import { BoltIcon, GiftIcon, ShieldIcon, ClockIcon } from "@/components/Icons";
-import { categories, tools, type Category } from "@/lib/tools";
 import { brand } from "@/lib/brand";
 
 const features = [
@@ -19,51 +17,33 @@ const faq = [
 ];
 
 export default function Home() {
-  const groups = Object.keys(categories) as Category[];
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 -top-40 h-[480px] opacity-60"
-          style={{ background: "radial-gradient(60% 60% at 50% 30%, var(--accent-soft), transparent 70%)" }}
-        />
-        <div className="relative mx-auto max-w-4xl px-4 pt-20 pb-14 text-center">
-          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted">
-            <ShieldIcon width={14} height={14} /> Files deleted automatically · No sign-up
+      <section style={{ background: "var(--hero)" }}>
+        <div className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:pt-20">
+          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-sm font-medium text-muted">
+            <ShieldIcon width={15} height={15} /> Free · No sign-up · Files deleted automatically
           </p>
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-            Every PDF tool you need, <span className="text-accent">in one place</span>
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">
+            Every PDF tool you need, <span className="text-accent">made easy</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-muted text-pretty">
-            Merge, split, compress, convert, rotate, unlock and protect PDFs. Free, fast and private.
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-muted text-pretty sm:text-xl">
+            Pick a tool, add your file, download the result. That&apos;s it.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/merge-pdf" className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-md hover:bg-accent-hover">
-              Merge PDF
-            </Link>
-            <Link href="/compress-pdf" className="rounded-xl border border-border bg-surface px-6 py-3 font-semibold hover:bg-surface-2">
-              Compress PDF
-            </Link>
-          </div>
+          <ol className="mx-auto mt-8 flex max-w-xl flex-wrap justify-center gap-x-8 gap-y-3 text-[15px] font-medium">
+            {["Choose a tool", "Add your file", "Download"].map((s, i) => (
+              <li key={s} className="flex items-center gap-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">{i + 1}</span>
+                {s}
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
-      <section id="tools" className="mx-auto max-w-6xl scroll-mt-24 px-4" aria-labelledby="tools-heading">
-        <h2 id="tools-heading" className="sr-only">All tools</h2>
-        <div className="space-y-12">
-          {groups.map((g) => (
-            <div key={g}>
-              <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold tracking-wide text-muted uppercase">
-                <span className="h-2 w-2 rounded-full" style={{ background: categories[g].color }} />
-                {categories[g].label}
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {tools.filter((t) => t.category === g).map((t) => <ToolCard key={t.slug} tool={t} />)}
-              </div>
-            </div>
-          ))}
-        </div>
+      <section id="tools" className="mx-auto mt-10 max-w-6xl scroll-mt-24 px-4" aria-labelledby="tools-heading">
+        <h2 id="tools-heading" className="mb-5 text-2xl font-bold tracking-tight">What do you want to do?</h2>
+        <ToolGrid />
       </section>
 
       <section className="mx-auto mt-24 max-w-6xl px-4" aria-labelledby="why">

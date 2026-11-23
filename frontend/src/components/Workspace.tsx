@@ -187,123 +187,159 @@ export default function Workspace({ tool }: { tool: Tool }) {
   }
 
   // ----------------------------------------------------------------- render
+  const stepIndex = phase.name === "select" ? 0 : phase.name === "done" ? 2 : 1;
+  const view = (() => {
 
-  if (phase.name === "select") {
-    return (
-      <Dropzone accept={tool.accept} acceptLabel={tool.acceptLabel} multiple={tool.multiple} onFiles={addFiles}>
-        {notice && <p className="mt-4 text-sm text-danger">{notice}</p>}
-        <p className="mt-8 flex items-center gap-2 text-xs text-muted">
-          <ShieldIcon width={16} height={16} /> Files are encrypted in transit and deleted automatically within an hour.
-        </p>
-      </Dropzone>
-    );
-  }
+    if (phase.name === "select") {
+      return (
+        <Dropzone accept={tool.accept} acceptLabel={tool.acceptLabel} multiple={tool.multiple} onFiles={addFiles}>
+          {notice && <p className="mt-4 text-sm text-danger">{notice}</p>}
+          <p className="mt-8 flex items-center gap-2 text-xs text-muted">
+            <ShieldIcon width={16} height={16} /> Files are encrypted in transit and deleted automatically within an hour.
+          </p>
+        </Dropzone>
+      );
+    }
 
-  if (phase.name === "uploading" || phase.name === "processing") {
-    const pct = phase.name === "uploading" ? Math.round(phase.progress * 100) : 100;
-    return (
-      <Panel>
-        <div className="flex flex-col items-center py-10 text-center" role="status" aria-live="polite">
-          <div className="text-accent"><Spinner size={44} /></div>
-          <h2 className="mt-6 text-xl font-semibold">{phase.name === "uploading" ? "Uploading…" : `Working on your ${tool.slug === "jpg-to-pdf" ? "images" : "PDF"}…`}</h2>
-          <div className="mt-5 h-2 w-full max-w-sm overflow-hidden rounded-full bg-surface-2">
-            <div
-              className={`h-full rounded-full bg-accent transition-all ${phase.name === "processing" ? "animate-pulse" : ""}`}
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <p className="mt-3 text-sm text-muted">{phase.name === "uploading" ? `${pct}%` : "This usually takes a few seconds."}</p>
-          <Button variant="ghost" size="sm" className="mt-6" onClick={() => abort.current?.abort()}>Cancel</Button>
-        </div>
-      </Panel>
-    );
-  }
-
-  if (phase.name === "done") return <Result tool={tool} job={phase.job} onRestart={reset} router={router} />;
-
-  if (phase.name === "error") {
-    return (
-      <Panel>
-        <div className="flex flex-col items-center py-10 text-center" role="alert">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger"><AlertIcon /></span>
-          <h2 className="mt-5 text-xl font-semibold">That didn&apos;t work</h2>
-          <p className="mt-2 max-w-md text-muted">{phase.message}</p>
-          <div className="mt-6 flex gap-3">
-            <Button onClick={() => setPhase({ name: "edit" })}>Back to my files</Button>
-            <Button variant="secondary" onClick={reset}>Start over</Button>
-          </div>
-        </div>
-      </Panel>
-    );
-  }
-
-  // phase: edit
-  const hasOptions = !pageMode && !["merge-pdf"].includes(tool.slug);
-  return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      <section aria-label="Files" className="min-w-0">
-        {picker.element}
-        {notice && <p className="mb-4 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{notice}</p>}
-        {pageMode ? (
-          <>
-            {tool.slug === "rotate-pdf" && (
-              <div className="mb-4 flex flex-wrap gap-2">
-                <Button variant="secondary" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: (p.rotation + 270) % 360 })))}>
-                  <RotateCcwIcon width={16} height={16} /> Rotate all left
-                </Button>
-                <Button variant="secondary" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: (p.rotation + 90) % 360 })))}>
-                  <RotateCwIcon width={16} height={16} /> Rotate all right
-                </Button>
-                {pages.some((p) => p.rotation) && (
-                  <Button variant="ghost" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: 0 })))}>Reset</Button>
-                )}
-              </div>
-            )}
-            {items[0]?.locked ? (
-              <LockedNotice />
-            ) : pages.length ? (
-              <PageGrid pages={pages} mode={tool.slug === "rotate-pdf" ? "rotate" : "organize"} onChange={setPages} />
-            ) : (
-              <div className="flex h-64 items-center justify-center text-muted"><Spinner size={28} /></div>
-            )}
-          </>
-        ) : (
-          <>
-            <FileGrid
-              items={items}
-              sortable={tool.multiple}
-              onReorder={reorder}
-              onRemove={removeItem}
-              onAdd={tool.multiple ? picker.open : undefined}
-            />
-            {locked && <div className="mt-4"><LockedNotice /></div>}
-          </>
-        )}
-      </section>
-
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+    if (phase.name === "uploading" || phase.name === "processing") {
+      const pct = phase.name === "uploading" ? Math.round(phase.progress * 100) : 100;
+      return (
         <Panel>
-          <div className="flex items-center gap-3">
-            <ToolTile tool={tool} size={36} />
-            <h2 className="text-lg font-semibold">{tool.name}</h2>
+          <div className="flex flex-col items-center py-10 text-center" role="status" aria-live="polite">
+            <div className="text-accent"><Spinner size={44} /></div>
+            <h2 className="mt-6 text-xl font-semibold">{phase.name === "uploading" ? "Uploading…" : `Working on your ${tool.slug === "jpg-to-pdf" ? "images" : "PDF"}…`}</h2>
+            <div className="mt-5 h-2 w-full max-w-sm overflow-hidden rounded-full bg-surface-2">
+              <div
+                className={`h-full rounded-full bg-accent transition-all ${phase.name === "processing" ? "animate-pulse" : ""}`}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <p className="mt-3 text-sm text-muted">{phase.name === "uploading" ? `${pct}%` : "This usually takes a few seconds."}</p>
+            <Button variant="ghost" size="sm" className="mt-6" onClick={() => abort.current?.abort()}>Cancel</Button>
           </div>
-          <div className="mt-5">
-            {hasOptions ? (
-              <ToolOptions slug={tool.slug} options={options} set={(patch) => setOptions((o) => ({ ...o, ...patch }))} pageCount={pageCount} />
-            ) : (
-              <SummaryText tool={tool} items={items} pages={pages} />
-            )}
-          </div>
-          <Button size="lg" className="mt-6 w-full" disabled={!!blocker} onClick={run}>
-            {tool.action} <ArrowRightIcon width={18} height={18} />
-          </Button>
-          {blocker && <p className="mt-2 text-center text-xs text-muted">{blocker}</p>}
-          <button type="button" onClick={reset} className="mt-4 w-full text-center text-sm text-muted hover:text-text">
-            {pageMode || !tool.multiple ? "Choose a different file" : "Remove all files"}
-          </button>
         </Panel>
-      </aside>
+      );
+    }
+
+    if (phase.name === "done") return <Result tool={tool} job={phase.job} onRestart={reset} router={router} />;
+
+    if (phase.name === "error") {
+      return (
+        <Panel>
+          <div className="flex flex-col items-center py-10 text-center" role="alert">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger"><AlertIcon /></span>
+            <h2 className="mt-5 text-xl font-semibold">That didn&apos;t work</h2>
+            <p className="mt-2 max-w-md text-muted">{phase.message}</p>
+            <div className="mt-6 flex gap-3">
+              <Button onClick={() => setPhase({ name: "edit" })}>Back to my files</Button>
+              <Button variant="secondary" onClick={reset}>Start over</Button>
+            </div>
+          </div>
+        </Panel>
+      );
+    }
+
+    // phase: edit
+    const hasOptions = !pageMode && !["merge-pdf"].includes(tool.slug);
+    return (
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+        <section aria-label="Files" className="min-w-0">
+          {picker.element}
+          {notice && <p className="mb-4 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{notice}</p>}
+          {pageMode ? (
+            <>
+              {tool.slug === "rotate-pdf" && (
+                <div className="mb-4 flex flex-wrap gap-2">
+                  <Button variant="secondary" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: (p.rotation + 270) % 360 })))}>
+                    <RotateCcwIcon width={16} height={16} /> Rotate all left
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: (p.rotation + 90) % 360 })))}>
+                    <RotateCwIcon width={16} height={16} /> Rotate all right
+                  </Button>
+                  {pages.some((p) => p.rotation) && (
+                    <Button variant="ghost" size="sm" onClick={() => setPages(pages.map((p) => ({ ...p, rotation: 0 })))}>Reset</Button>
+                  )}
+                </div>
+              )}
+              {items[0]?.locked ? (
+                <LockedNotice />
+              ) : pages.length ? (
+                <PageGrid pages={pages} mode={tool.slug === "rotate-pdf" ? "rotate" : "organize"} onChange={setPages} />
+              ) : (
+                <div className="flex h-64 items-center justify-center text-muted"><Spinner size={28} /></div>
+              )}
+            </>
+          ) : (
+            <>
+              <FileGrid
+                items={items}
+                sortable={tool.multiple}
+                onReorder={reorder}
+                onRemove={removeItem}
+                onAdd={tool.multiple ? picker.open : undefined}
+              />
+              {locked && <div className="mt-4"><LockedNotice /></div>}
+            </>
+          )}
+        </section>
+
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <Panel>
+            <div className="flex items-center gap-3">
+              <ToolTile tool={tool} size={36} />
+              <h2 className="text-lg font-semibold">{tool.name}</h2>
+            </div>
+            <div className="mt-5">
+              {hasOptions ? (
+                <ToolOptions slug={tool.slug} options={options} set={(patch) => setOptions((o) => ({ ...o, ...patch }))} pageCount={pageCount} />
+              ) : (
+                <SummaryText tool={tool} items={items} pages={pages} />
+              )}
+            </div>
+            <Button size="lg" className="mt-6 w-full" disabled={!!blocker} onClick={run}>
+              {tool.action} <ArrowRightIcon width={18} height={18} />
+            </Button>
+            {blocker && <p className="mt-2 text-center text-xs text-muted">{blocker}</p>}
+            <button type="button" onClick={reset} className="mt-4 w-full text-center text-sm text-muted hover:text-text">
+              {pageMode || !tool.multiple ? "Choose a different file" : "Remove all files"}
+            </button>
+          </Panel>
+        </aside>
+      </div>
+    );
+  })();
+
+  return (
+    <div>
+      <StepBar current={stepIndex} working={phase.name === "uploading" || phase.name === "processing"} />
+      {view}
     </div>
+  );
+}
+
+const STEPS = ["Add files", "Choose options", "Download"];
+
+/** Shows where the user is: 1 Add files, 2 Choose options, 3 Download. */
+function StepBar({ current, working }: { current: number; working: boolean }) {
+  return (
+    <ol aria-label="Progress" className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold sm:gap-3">
+      {STEPS.map((label, i) => {
+        const state = i < current ? "done" : i === current ? "current" : "todo";
+        return (
+          <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={state === "current" ? "step" : undefined}>
+            <span
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm transition-colors ${
+                state === "todo" ? "border-2 border-border text-muted" : "bg-accent text-white"
+              } ${state === "current" && working ? "animate-pulse" : ""}`}
+            >
+              {state === "done" ? <CheckIcon width={16} height={16} /> : i + 1}
+            </span>
+            <span className={`hidden sm:inline ${state === "todo" ? "text-muted" : "text-text"}`}>{label}</span>
+            {i < STEPS.length - 1 && <span aria-hidden className={`h-0.5 w-6 rounded sm:w-12 ${i < current ? "bg-accent" : "bg-border"}`} />}
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 

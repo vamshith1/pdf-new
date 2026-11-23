@@ -2,43 +2,49 @@
 
 /* Design tokens. Light by default, dark follows the OS. */
 :root {
-  --bg: #f7f7fb;
+  /* Light: white and red (default) */
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f1f1f7;
-  --border: #e3e3ee;
-  --text: #16161d;
-  --muted: #5d5d6e;
-  --accent: #5b4bdb;
-  --accent-hover: #4a3ac7;
-  --accent-soft: #ecebff;
-  --success: #138a55;
-  --success-soft: #e3f6ec;
-  --danger: #c4314b;
-  --danger-soft: #fdecef;
-  --cat-organize: #e5484d;
-  --cat-optimize: #12a594;
-  --cat-convert: #f0870e;
+  --surface-2: #f5f5f7;
+  --border: #e4e4e9;
+  --text: #17171c;
+  --muted: #55555f;
+  --accent: #e5322d;
+  --accent-hover: #c8251f;
+  --accent-soft: #fdeceb;
+  --success: #12804d;
+  --success-soft: #e2f5ea;
+  --danger: #c4241f;
+  --danger-soft: #fdeceb;
+  --cat-organize: #e5322d;
+  --cat-optimize: #0f9d84;
+  --cat-convert: #e8790c;
   --cat-security: #3e63dd;
-  --shadow: 0 1px 2px rgb(20 20 40 / 0.04), 0 4px 16px rgb(20 20 40 / 0.06);
+  --hero: linear-gradient(180deg, #fff3f2 0%, #ffffff 100%);
+  --shadow: 0 1px 2px rgb(20 20 40 / 0.05), 0 6px 20px rgb(20 20 40 / 0.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f0f14;
-    --surface: #17171f;
-    --surface-2: #1f1f29;
-    --border: #2c2c3a;
-    --text: #ececf3;
-    --muted: #a0a0b4;
-    --accent: #8b7dff;
-    --accent-hover: #a094ff;
-    --accent-soft: #25214a;
-    --success: #3dd68c;
-    --success-soft: #12301f;
-    --danger: #ff6b81;
-    --danger-soft: #3a1820;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
-  }
+/* Dark: chosen with the theme toggle (stored in localStorage) */
+:root[data-theme="dark"] {
+  --bg: #121215;
+  --surface: #1b1b20;
+  --surface-2: #24242b;
+  --border: #33333d;
+  --text: #f1f1f4;
+  --muted: #b0b0bd;
+  --accent: #ff5a4f;
+  --accent-hover: #ff7a70;
+  --accent-soft: #3a1c1b;
+  --success: #3dd68c;
+  --success-soft: #12301f;
+  --danger: #ff7a70;
+  --danger-soft: #3a1c1b;
+  --cat-organize: #ff5a4f;
+  --cat-optimize: #2fd3b4;
+  --cat-convert: #ffa043;
+  --cat-security: #7b97ff;
+  --hero: linear-gradient(180deg, #24161a 0%, #121215 100%);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.3);
 }
 
 @theme inline {
@@ -60,10 +66,15 @@
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-inter), system-ui, sans-serif;
@@ -77,3 +88,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* Gentle entrance for panels and menus */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-rise { animation: rise 0.22s ease-out both; }
