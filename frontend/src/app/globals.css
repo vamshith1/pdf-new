@@ -2,50 +2,50 @@
 
 /* Design tokens. Light by default, dark follows the OS. */
 :root {
-  /* Light: white and red (default) */
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f5f5f7;
-  --border: #e4e4e9;
-  --text: #17171c;
-  --muted: #55555f;
-  --accent: #e5322d;
-  --accent-hover: #c8251f;
-  --accent-soft: #fdeceb;
-  --success: #12804d;
-  --success-soft: #e2f5ea;
-  --danger: #c4241f;
-  --danger-soft: #fdeceb;
-  --cat-organize: #e5322d;
-  --cat-optimize: #0f9d84;
-  --cat-convert: #e8790c;
-  --cat-edit: #8e4ec6;
-  --cat-security: #3e63dd;
-  --hero: linear-gradient(180deg, #fff3f2 0%, #ffffff 100%);
-  --shadow: 0 1px 2px rgb(20 20 40 / 0.05), 0 6px 20px rgb(20 20 40 / 0.06);
+  /* Light: cream and forest green (default) */
+  --bg: #f8f4e9;
+  --surface: #fffdf6;
+  --surface-2: #f0eadb;
+  --border: #e2d9c3;
+  --text: #1c2a21;
+  --muted: #56614f;
+  --accent: #2c5e3f;
+  --accent-hover: #224b32;
+  --accent-soft: #e2ecdd;
+  --success: #2f7d4f;
+  --success-soft: #e0f0e4;
+  --danger: #b3261e;
+  --danger-soft: #f8e3dd;
+  --cat-organize: #2c5e3f;
+  --cat-optimize: #0f8576;
+  --cat-convert: #c0731a;
+  --cat-edit: #85579f;
+  --cat-security: #3a5fa8;
+  --hero: linear-gradient(180deg, #efe7d2 0%, #f8f4e9 100%);
+  --shadow: 0 1px 2px rgb(40 50 30 / 0.06), 0 6px 20px rgb(40 50 30 / 0.07);
 }
 
 /* Dark: chosen with the theme toggle (stored in localStorage) */
 :root[data-theme="dark"] {
-  --bg: #121215;
-  --surface: #1b1b20;
-  --surface-2: #24242b;
-  --border: #33333d;
-  --text: #f1f1f4;
-  --muted: #b0b0bd;
-  --accent: #ff5a4f;
-  --accent-hover: #ff7a70;
-  --accent-soft: #3a1c1b;
-  --success: #3dd68c;
-  --success-soft: #12301f;
-  --danger: #ff7a70;
-  --danger-soft: #3a1c1b;
-  --cat-organize: #ff5a4f;
-  --cat-optimize: #2fd3b4;
-  --cat-convert: #ffa043;
-  --cat-edit: #c49bff;
-  --cat-security: #7b97ff;
-  --hero: linear-gradient(180deg, #24161a 0%, #121215 100%);
+  --bg: #111a14;
+  --surface: #17231b;
+  --surface-2: #1f2e24;
+  --border: #2e4235;
+  --text: #f2ecdc;
+  --muted: #b9b9a4;
+  --accent: #3f8c58;
+  --accent-hover: #4c9c66;
+  --accent-soft: #1d3325;
+  --success: #6cc98a;
+  --success-soft: #16301f;
+  --danger: #ff8a7a;
+  --danger-soft: #3a1f1b;
+  --cat-organize: #5fae78;
+  --cat-optimize: #3cc7b0;
+  --cat-convert: #f0a24a;
+  --cat-edit: #c39be0;
+  --cat-security: #86a3e8;
+  --hero: linear-gradient(180deg, #1a2a1f 0%, #111a14 100%);
   --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.3);
 }
 
