@@ -3,15 +3,15 @@
 /* Design tokens. Light by default, dark follows the OS. */
 :root {
   /* Light: cream and forest green (default) */
-  --bg: #f8f4e9;
-  --surface: #fffdf6;
-  --surface-2: #f0eadb;
-  --border: #e2d9c3;
-  --text: #1c2a21;
-  --muted: #56614f;
+  --bg: #f2e8cf;
+  --surface: #fbf5e6;
+  --surface-2: #e9ddbf;
+  --border: #d6c59c;
+  --text: #18261d;
+  --muted: #4e5a46;
   --accent: #2c5e3f;
   --accent-hover: #224b32;
-  --accent-soft: #e2ecdd;
+  --accent-soft: #d3e4c8;
   --success: #2f7d4f;
   --success-soft: #e0f0e4;
   --danger: #b3261e;
@@ -21,8 +21,8 @@
   --cat-convert: #c0731a;
   --cat-edit: #85579f;
   --cat-security: #3a5fa8;
-  --hero: linear-gradient(180deg, #efe7d2 0%, #f8f4e9 100%);
-  --shadow: 0 1px 2px rgb(40 50 30 / 0.06), 0 6px 20px rgb(40 50 30 / 0.07);
+  --hero: linear-gradient(180deg, #d5e3c4 0%, #e6e6c6 45%, #f2e8cf 100%);
+  --shadow: 0 1px 2px rgb(40 50 30 / 0.08), 0 8px 24px rgb(40 50 30 / 0.1);
 }
 
 /* Dark: chosen with the theme toggle (stored in localStorage) */
