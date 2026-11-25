@@ -52,7 +52,7 @@ export default function ToolGrid() {
       </div>
 
       {shown.length ? (
-        <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-5 grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 md:grid-cols-6 lg:grid-cols-8">
           {shown.map((t) => (
             <ToolCard key={t.slug} tool={t} />
           ))}

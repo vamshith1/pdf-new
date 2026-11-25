@@ -3,25 +3,25 @@
 /* Design tokens. Light by default, dark follows the OS. */
 :root {
   /* Light: cream and forest green (default) */
-  --bg: #f2e8cf;
-  --surface: #fbf5e6;
-  --surface-2: #e9ddbf;
-  --border: #d6c59c;
+  --bg: #e8dab4;
+  --surface: #f4ead0;
+  --surface-2: #ddcca2;
+  --border: #c8b183;
   --text: #18261d;
-  --muted: #4e5a46;
-  --accent: #2c5e3f;
-  --accent-hover: #224b32;
-  --accent-soft: #d3e4c8;
+  --muted: #4a5440;
+  --accent: #234f31;
+  --accent-hover: #1a3d25;
+  --accent-soft: #c6dab6;
   --success: #2f7d4f;
   --success-soft: #e0f0e4;
   --danger: #b3261e;
   --danger-soft: #f8e3dd;
-  --cat-organize: #2c5e3f;
+  --cat-organize: #234f31;
   --cat-optimize: #0f8576;
   --cat-convert: #c0731a;
   --cat-edit: #85579f;
   --cat-security: #3a5fa8;
-  --hero: linear-gradient(180deg, #d5e3c4 0%, #e6e6c6 45%, #f2e8cf 100%);
+  --hero: linear-gradient(180deg, #b9cfa3 0%, #d3d6aa 45%, #e8dab4 100%);
   --shadow: 0 1px 2px rgb(40 50 30 / 0.08), 0 8px 24px rgb(40 50 30 / 0.1);
 }
 
