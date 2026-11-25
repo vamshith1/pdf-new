@@ -18,11 +18,14 @@ export default function ToolCard({ tool }: { tool: Tool }) {
   return (
     <Link
       href={`/${tool.slug}`}
-      className="group flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-accent/50"
+      title={tool.summary}
+      className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 shadow-card transition-all hover:-translate-y-0.5 hover:border-accent/50 sm:p-3.5"
     >
-      <ToolTile tool={tool} />
-      <span className="font-semibold group-hover:text-accent">{tool.name}</span>
-      <span className="text-sm leading-relaxed text-muted">{tool.summary}</span>
+      <ToolTile tool={tool} size={38} />
+      <span className="min-w-0">
+        <span className="block text-[15px] leading-snug font-semibold group-hover:text-accent">{tool.name}</span>
+        <span className="mt-0.5 hidden text-[13px] leading-snug text-muted sm:line-clamp-1">{tool.summary}</span>
+      </span>
     </Link>
   );
 }
