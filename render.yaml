@@ -1,7 +1,7 @@
 # Render Blueprint: Dashboard -> New -> Blueprint -> pick this repo -> Apply.
 services:
   - type: web
-    name: easypdf
+    name: geteasypdf
     runtime: docker
     plan: free
     region: singapore
@@ -13,4 +13,4 @@ services:
       - key: MAX_FILE_SIZE
         value: 50MB
       - key: NEXT_PUBLIC_SITE_URL
-        value: https://easypdf-wefl.onrender.com
+        value: https://geteasypdf.onrender.com
