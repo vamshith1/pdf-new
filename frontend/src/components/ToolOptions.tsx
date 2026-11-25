@@ -85,7 +85,7 @@ function WatermarkPreview({ text, layout, size, opacity }: { text: string; layou
   const fontSize = Math.min(base, room / (0.66 * Math.max(1, text.length)));
   const alpha = { light: 0.15, medium: 0.3, strong: 0.5 }[opacity] ?? 0.3;
   return (
-    <div aria-hidden className="mx-auto flex aspect-[1/1.414] w-36 items-center justify-center overflow-hidden rounded-md border border-border bg-white shadow-sm">
+    <div aria-hidden className="mx-auto flex aspect-[1/1.414] w-36 items-center justify-center overflow-hidden rounded-md border border-border bg-[#efe3c4] shadow-sm">
       <span
         className="font-bold whitespace-nowrap text-black"
         style={{ fontSize, opacity: alpha, transform: layout === "diagonal" ? "rotate(-54.7deg)" : "none" }}
@@ -323,7 +323,7 @@ export default function ToolOptions({
               <div
                 role="radiogroup"
                 aria-label="Page number position"
-                className="grid h-40 w-28 shrink-0 grid-cols-3 content-between rounded-md border-2 border-border bg-white p-1.5 shadow-sm"
+                className="grid h-40 w-28 shrink-0 grid-cols-3 content-between rounded-md border-2 border-border bg-[#efe3c4] p-1.5 shadow-sm"
               >
                 {["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"].map((pos) => {
                   const on = o.position === pos;
