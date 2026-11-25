@@ -1,7 +1,9 @@
 # One image: the Next.js site is exported to static files and served by Spring Boot.
+# Base images come from Amazon's public mirror of the official Docker images (identical
+# digests) to avoid Docker Hub's anonymous pull limits on shared build machines.
 
 # 1) Build the website
-FROM node:22-alpine AS web
+FROM public.ecr.aws/docker/library/node:22-alpine AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
@@ -12,7 +14,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # 2) Build the API with the site bundled inside the jar
-FROM maven:3.9-eclipse-temurin-21 AS api
+FROM public.ecr.aws/docker/library/maven:3.9-eclipse-temurin-21 AS api
 WORKDIR /api
 COPY backend/pom.xml ./
 RUN mvn -q -B dependency:go-offline
@@ -23,7 +25,7 @@ RUN mvn -q -B package -DskipTests
 # 3) Runtime image (Ubuntu) with the document engines:
 #    LibreOffice (Word/Excel/PowerPoint <-> PDF) and Tesseract (OCR), plus fonts
 #    metric-compatible with Microsoft's (Liberation, Carlito, Caladea) so layouts stay put.
-FROM eclipse-temurin:21-jre
+FROM public.ecr.aws/docker/library/eclipse-temurin:21-jre
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        libreoffice-writer-nogui libreoffice-calc-nogui libreoffice-impress-nogui libreoffice-draw-nogui \
