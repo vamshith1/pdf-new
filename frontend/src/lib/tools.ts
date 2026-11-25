@@ -42,6 +42,8 @@ export interface Tool {
   /** Tools to suggest after this one finishes. */
   next: ToolSlug[];
   steps: string[];
+  /** Everyday reasons people use the tool (shown on the page, helps search). */
+  uses: string[];
   faq: { q: string; a: string }[];
   seoTitle: string;
   seoDescription: string;
@@ -78,9 +80,12 @@ export const tools: Tool[] = [
       { q: "Is there a limit on how many PDFs I can merge?", a: "You can merge up to 20 files at once, up to 100 MB in total." },
       { q: "Will bookmarks and links be kept?", a: "Yes. Page content, links and bookmarks from each file are carried over." },
       { q: "Is it safe to merge confidential files?", a: "Files are processed on our server over HTTPS and deleted automatically within an hour. You can also delete them right away after downloading." },
+      { q: "Can I merge PDFs on my phone?", a: "Yes. easypdf works in the browser on Android and iPhone, so you don't need to install an app." },
+      { q: "Does it add a watermark?", a: "No. The merged PDF has no watermark and no easypdf branding." },
     ],
-    seoTitle: "Merge PDF – Combine PDF files online for free",
-    seoDescription: "Combine multiple PDFs into one file in seconds. Free, no sign-up, and files are deleted automatically.",
+    uses: ["Join scanned pages of an assignment into one PDF", "Combine marksheets and certificates for a job or college application", "Put invoices or bills for the month into a single file", "Merge PDFs on your phone without installing an app"],
+    seoTitle: "Merge PDF Free – No Sign Up, No Watermark",
+    seoDescription: "Combine PDF files into one online for free. No sign-up, no watermark, works on phone and PC. Files are deleted automatically.",
   },
   {
     slug: "split-pdf",
@@ -100,9 +105,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "How do I write page ranges?", a: "Use commas between ranges, like 1-3, 4-6, 9. Each range becomes its own PDF. Open-ended ranges work too: 8- means page 8 to the end." },
       { q: "Why did I get a ZIP file?", a: "When the split produces more than one PDF, they're bundled into a single ZIP so you only download once." },
+      { q: "How do I extract just one page from a PDF?", a: "Choose Ranges and type the page number, for example 5. You'll get a PDF with only that page." },
     ],
-    seoTitle: "Split PDF – Extract pages from a PDF online",
-    seoDescription: "Split a PDF by page ranges or into single pages. Free, fast and private.",
+    uses: ["Extract one chapter from a long PDF book or notes", "Separate a combined scan into individual documents", "Send only the pages someone needs instead of the whole file", "Save every page of a PDF as its own file"],
+    seoTitle: "Split PDF Free – Extract Pages Online, No Sign Up",
+    seoDescription: "Split a PDF into separate files or extract only the pages you need. Free, no sign-up, no watermark, works on mobile.",
   },
   {
     slug: "organize-pdf",
@@ -122,9 +129,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Can I undo a deleted page?", a: "Yes. Deleted pages stay in the grid, greyed out, until you save. Click the page again to restore it." },
       { q: "Is the original file changed?", a: "No. You get a new PDF; your original file on your device is untouched." },
+      { q: "How do I delete a page from a PDF?", a: "Open Organize PDF, click the delete button under that page, then save. The other pages stay as they are." },
     ],
-    seoTitle: "Organize PDF – Reorder, delete and rotate PDF pages",
-    seoDescription: "Rearrange, remove and rotate PDF pages visually. Free online PDF organizer.",
+    uses: ["Fix pages that were scanned in the wrong order", "Delete blank or extra pages from a PDF", "Move the cover page to the front", "Clean up a PDF before sending it"],
+    seoTitle: "Rearrange PDF Pages Free – Delete & Reorder",
+    seoDescription: "Drag to reorder PDF pages, delete pages you don't need and rotate the rest. Free online, no sign-up, no watermark.",
   },
   {
     slug: "rotate-pdf",
@@ -144,9 +153,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Is the rotation permanent?", a: "Yes. The new PDF opens with the pages turned the way you chose, in every PDF reader." },
       { q: "Does rotating reduce quality?", a: "No. Rotation only changes page orientation; text and images aren't re-encoded." },
+      { q: "Can I rotate just one page?", a: "Yes. Click the rotate button on only the pages you want to turn. The others stay unchanged." },
     ],
-    seoTitle: "Rotate PDF – Rotate PDF pages online for free",
-    seoDescription: "Rotate all or selected PDF pages permanently. Free, no sign-up.",
+    uses: ["Fix a scanned page that came out upside down", "Turn landscape pages so they read correctly", "Rotate only one page instead of the whole document", "Fix sideways photos taken with a phone and saved as PDF"],
+    seoTitle: "Rotate PDF Pages Free – Save Permanently",
+    seoDescription: "Rotate upside-down or sideways PDF pages and save them permanently. Rotate one page or all. Free, no sign-up.",
   },
   {
     slug: "compress-pdf",
@@ -167,9 +178,12 @@ export const tools: Tool[] = [
       { q: "How much smaller will my file get?", a: "It depends on the content. Scans and photo-heavy PDFs often shrink by 50–90%. Text-only PDFs are already small and may barely change." },
       { q: "Will text become blurry?", a: "No. Only embedded images are resized and re-encoded. Text and vector graphics stay sharp." },
       { q: "What if the file doesn't get smaller?", a: "We never give you a bigger file. If your PDF is already optimised, you get the original back." },
+      { q: "How do I make a PDF small enough for an online form?", a: "Choose Strong compression. It shrinks images the most, which is usually what makes scanned PDFs large." },
+      { q: "Will compression make text blurry?", a: "No. Text stays sharp because only images are re-compressed." },
     ],
-    seoTitle: "Compress PDF – Reduce PDF file size online",
-    seoDescription: "Shrink PDF files for email and uploads while keeping text sharp. Free and private.",
+    uses: ["Make a PDF small enough to attach to an email", "Shrink documents for online application or exam forms with size limits", "Send large PDFs faster on WhatsApp", "Save storage space on your phone"],
+    seoTitle: "Compress PDF Free – Reduce Size for Email & Forms",
+    seoDescription: "Reduce PDF file size for email, WhatsApp and online application forms. Free, no sign-up, keeps text sharp.",
   },
   {
     slug: "jpg-to-pdf",
@@ -190,9 +204,11 @@ export const tools: Tool[] = [
       { q: "Which image formats are supported?", a: "JPG, PNG, WebP, GIF, BMP and TIFF." },
       { q: "Will my photos lose quality?", a: "No. JPGs are placed in the PDF exactly as they are, and other formats are stored losslessly." },
       { q: "My phone photos are sideways in other tools. Here too?", a: "No. We read the photo's orientation so pages come out the right way up." },
+      { q: "Can I convert many photos into one PDF?", a: "Yes. Add all the images, drag them into order and they'll become pages of a single PDF." },
     ],
-    seoTitle: "JPG to PDF – Convert images to PDF online",
-    seoDescription: "Convert JPG, PNG and other images to PDF without losing quality. Free and private.",
+    uses: ["Turn photos of handwritten notes into one PDF", "Convert scanned ID or document photos to PDF for uploads", "Combine several images into a single PDF file", "Make a PDF from screenshots"],
+    seoTitle: "JPG to PDF Free – Photos to PDF, No Watermark",
+    seoDescription: "Convert JPG, PNG and phone photos into one PDF. Choose A4, margins and order. Free, no sign-up, no watermark.",
   },
   {
     slug: "pdf-to-jpg",
@@ -212,9 +228,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "What resolution are the images?", a: "Standard is 150 DPI, good for screens. High is 300 DPI, good for printing. Low is 72 DPI for small previews." },
       { q: "Can I convert just one page?", a: "Yes. Type the page numbers you want, like 2 or 1-3, 7." },
+      { q: "Can I convert just one page to JPG?", a: "Yes. Choose 'Choose pages' and type the page number you need." },
     ],
-    seoTitle: "PDF to JPG – Convert PDF pages to images",
-    seoDescription: "Turn PDF pages into JPG images at up to 300 DPI. Free online converter.",
+    uses: ["Share a PDF page as an image on WhatsApp or Instagram", "Get a picture of a certificate or ticket from a PDF", "Use a PDF page in a presentation or document", "Convert only selected pages to images"],
+    seoTitle: "PDF to JPG Free – High Quality Images, No Sign Up",
+    seoDescription: "Convert each PDF page to a JPG image at up to 300 DPI. Free online, no sign-up, works on phone and PC.",
   },
   {
     slug: "protect-pdf",
@@ -236,8 +254,9 @@ export const tools: Tool[] = [
       { q: "Do you store my password?", a: "No. It's used once to encrypt the file and is never saved or logged." },
       { q: "What if I forget the password?", a: "It can't be recovered, so keep it somewhere safe or keep an unprotected copy." },
     ],
-    seoTitle: "Protect PDF – Add a password to a PDF",
-    seoDescription: "Encrypt PDFs with AES-256 password protection. Free, private, no sign-up.",
+    uses: ["Lock a PDF with bank statements or salary slips before sharing", "Protect ID documents you send by email", "Keep confidential reports private", "Add a password to a PDF on your phone"],
+    seoTitle: "Password Protect PDF Free – Lock PDF, No Sign Up",
+    seoDescription: "Add a password to a PDF with AES-256 encryption. Free online, no sign-up, files deleted automatically.",
   },
   {
     slug: "unlock-pdf",
@@ -257,9 +276,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Can you unlock a PDF without the password?", a: "Only when the file opens without one but blocks printing or editing. Files that need a password to open require that password." },
       { q: "Is unlocking legal?", a: "Unlock only files you own or have permission to use." },
+      { q: "Can it unlock a PDF if I forgot the password?", a: "No. You need to know the password to open the file. easypdf doesn't guess or crack passwords." },
     ],
-    seoTitle: "Unlock PDF – Remove a PDF password",
-    seoDescription: "Remove passwords and restrictions from PDFs you have access to. Free and private.",
+    uses: ["Remove the password from bank or credit card statements you've received", "Stop a PDF from asking for its password every time", "Remove printing or copying restrictions from your own files", "Prepare a protected PDF for merging or editing"],
+    seoTitle: "Unlock PDF Free – Remove Password From PDF You Own",
+    seoDescription: "Remove the password from a PDF when you know it, so it opens without asking every time. Free, no sign-up.",
   },
   {
     slug: "word-to-pdf",
@@ -279,9 +300,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Will my formatting be kept?", a: "Text, tables, images and page layout are kept. Uncommon fonts may be replaced by a similar font." },
       { q: "Can I convert password-protected documents?", a: "No. Remove the password in Word first, then convert." },
+      { q: "Can I convert Word to PDF without Microsoft Office?", a: "Yes. The conversion happens on our server, so you don't need Word installed." },
     ],
-    seoTitle: "Word to PDF – Convert DOC and DOCX to PDF online",
-    seoDescription: "Convert Word documents to PDF for free. Keeps your layout, no sign-up.",
+    uses: ["Convert a resume to PDF before applying for jobs", "Turn an assignment or project report into PDF for submission", "Convert Word files to PDF on a phone without MS Office", "Make a document look the same on every device"],
+    seoTitle: "Word to PDF Free – Convert DOCX Online, No Sign Up",
+    seoDescription: "Convert DOC and DOCX files to PDF with layout, fonts and images kept. Free, no sign-up, no watermark.",
   },
   {
     slug: "excel-to-pdf",
@@ -302,8 +325,9 @@ export const tools: Tool[] = [
       { q: "Are all sheets converted?", a: "Yes. Every sheet is included, in order." },
       { q: "My wide table is split across pages. Why?", a: "The PDF follows the print settings saved in the spreadsheet. Set the print area or fit-to-page in Excel first for best results." },
     ],
-    seoTitle: "Excel to PDF – Convert XLS and XLSX to PDF online",
-    seoDescription: "Convert Excel spreadsheets to PDF for free. No sign-up, files deleted automatically.",
+    uses: ["Send a price list or invoice as PDF", "Share a timetable or attendance sheet that can't be edited", "Print a spreadsheet with its layout kept", "Convert Excel to PDF without installing Office"],
+    seoTitle: "Excel to PDF Free – Convert XLSX to PDF Online",
+    seoDescription: "Convert Excel spreadsheets (XLS, XLSX) to PDF online. Every sheet included. Free, no sign-up, no watermark.",
   },
   {
     slug: "powerpoint-to-pdf",
@@ -323,8 +347,9 @@ export const tools: Tool[] = [
     faq: [
       { q: "Are animations kept?", a: "No. A PDF shows each slide as a still page, which is ideal for sharing and printing." },
     ],
-    seoTitle: "PowerPoint to PDF – Convert PPT and PPTX to PDF",
-    seoDescription: "Convert PowerPoint presentations to PDF for free, one slide per page.",
+    uses: ["Submit a college presentation as PDF", "Share slides that open on any phone", "Print presentation handouts", "Send a pitch deck that can't be edited"],
+    seoTitle: "PPT to PDF Free – Convert PowerPoint Slides to PDF",
+    seoDescription: "Convert PowerPoint (PPT, PPTX) presentations to PDF, one slide per page. Free, no sign-up, no watermark.",
   },
   {
     slug: "pdf-to-word",
@@ -344,9 +369,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Will the Word file look exactly like the PDF?", a: "Text and images are kept and editable. Complex layouts with many columns may shift a little." },
       { q: "My scanned PDF gives an empty document.", a: "Scans are pictures of text. Run OCR PDF first, then convert the result to Word." },
+      { q: "Can I convert a scanned PDF to Word?", a: "Run OCR PDF first to recognise the text, then convert the result to Word." },
     ],
-    seoTitle: "PDF to Word – Convert PDF to editable DOCX",
-    seoDescription: "Convert PDF files to editable Word documents for free. No sign-up.",
+    uses: ["Edit a resume you only have as PDF", "Change the text of a form or letter", "Reuse content from a PDF report", "Copy tables and paragraphs into Word"],
+    seoTitle: "PDF to Word Free – Convert PDF to Editable DOCX",
+    seoDescription: "Convert a PDF to an editable Word document online. Free, no sign-up, no watermark. Use OCR first for scanned PDFs.",
   },
   {
     slug: "pdf-to-text",
@@ -366,8 +393,9 @@ export const tools: Tool[] = [
     faq: [
       { q: "Why is my text file empty?", a: "Scanned PDFs contain pictures of text, not real text. Run OCR PDF first." },
     ],
-    seoTitle: "PDF to Text – Extract text from a PDF",
-    seoDescription: "Extract all text from a PDF into a plain text file. Free and private.",
+    uses: ["Copy text from a PDF that won't let you select it easily", "Get the text of notes or an ebook for searching", "Paste PDF content into another app", "Count words in a PDF"],
+    seoTitle: "PDF to Text Free – Copy All Text From a PDF",
+    seoDescription: "Extract all text from a PDF into a plain .txt file, page by page. Free online, no sign-up.",
   },
   {
     slug: "extract-images",
@@ -388,8 +416,9 @@ export const tools: Tool[] = [
       { q: "Is this different from PDF to JPG?", a: "Yes. PDF to JPG takes a picture of each whole page. Extract images saves the photos inside the PDF, at their original resolution." },
       { q: "Some tiny images are missing.", a: "Icons smaller than 32 pixels and repeated images are skipped." },
     ],
-    seoTitle: "Extract images from PDF – Save PDF pictures",
-    seoDescription: "Save all images from a PDF at original quality. Free, no sign-up.",
+    uses: ["Save photos from a PDF brochure or catalogue", "Get the logo or pictures from a document", "Reuse images from a PDF report", "Download all images at once instead of screenshotting"],
+    seoTitle: "Extract Images From PDF Free – Save All Pictures",
+    seoDescription: "Save every image inside a PDF at original quality, downloaded together as a ZIP. Free, no sign-up.",
   },
   {
     slug: "ocr-pdf",
@@ -410,9 +439,12 @@ export const tools: Tool[] = [
       { q: "What does OCR do?", a: "It reads the letters on a scanned page and adds an invisible text layer, so you can search, select and copy the text. The page still looks the same." },
       { q: "How long does it take?", a: "Roughly 5–15 seconds per page." },
       { q: "Which languages are supported?", a: "English, and Hindi together with English." },
+      { q: "Does it support Hindi?", a: "Yes. Choose 'Hindi + English' to recognise documents in Hindi (Devanagari), English, or both mixed." },
+      { q: "Is the OCR free?", a: "Yes, for up to 30 pages per file, with no sign-up." },
     ],
-    seoTitle: "OCR PDF – Make scanned PDFs searchable",
-    seoDescription: "Turn scanned PDFs into searchable, selectable text with free online OCR.",
+    uses: ["Make a scanned Hindi or English document searchable", "Copy text from a scanned PDF or photo PDF", "Prepare a scanned PDF for converting to Word", "Search inside old scanned notes and books"],
+    seoTitle: "OCR PDF Free – Hindi & English Scanned PDF to Text",
+    seoDescription: "Free online OCR for scanned PDFs in English and Hindi. Make text searchable and copyable. No sign-up.",
   },
   {
     slug: "watermark-pdf",
@@ -432,9 +464,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Can the watermark be removed?", a: "It becomes part of the page, so it can't simply be deleted in a PDF reader. Combine it with Protect PDF for extra safety." },
       { q: "Which characters can I use?", a: "Letters, numbers and common symbols. Other alphabets aren't supported yet." },
+      { q: "Can I use a watermark on ID copies?", a: "Yes. Many people add text like 'For KYC only' so a copy of an ID can't easily be reused elsewhere." },
     ],
-    seoTitle: "Watermark PDF – Add a text watermark to PDF",
-    seoDescription: "Add a CONFIDENTIAL or DRAFT text watermark to PDF pages. Free, no sign-up.",
+    uses: ["Mark documents as CONFIDENTIAL or DRAFT", "Add your name to notes or designs before sharing", "Stamp ID copies with 'For verification only'", "Discourage people from reusing your PDF"],
+    seoTitle: "Add Watermark to PDF Free – Text Watermark Online",
+    seoDescription: "Add a text watermark like CONFIDENTIAL, DRAFT or your name to every PDF page. Free, no sign-up.",
   },
   {
     slug: "add-page-numbers",
@@ -454,9 +488,11 @@ export const tools: Tool[] = [
     faq: [
       { q: "Can I skip the cover page?", a: "Yes. Turn on Skip first page and numbering starts on page 2." },
       { q: "Can I start from a number other than 1?", a: "Yes. Set the first number to anything you like." },
+      { q: "Can I skip the first page?", a: "Yes. Set 'Skip first page' to Yes and numbering starts on page 2." },
     ],
-    seoTitle: "Add page numbers to PDF – Number PDF pages",
-    seoDescription: "Add page numbers to a PDF in seconds. Choose position and format. Free.",
+    uses: ["Number pages of a project report or thesis", "Skip numbering on the cover page", "Use 'Page 1 of 10' style for documents", "Start numbering from any number"],
+    seoTitle: "Add Page Numbers to PDF Free – No Sign Up",
+    seoDescription: "Add page numbers to a PDF online. Choose position, style like 'Page 1 of 9' and skip the cover page. Free, no sign-up.",
   },
 ];
 

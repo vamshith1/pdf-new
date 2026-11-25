@@ -56,6 +56,18 @@ export default async function ToolPage({ params }: PageProps<"/[tool]">) {
               </li>
             ))}
           </ol>
+
+          <h2 className="mt-12 text-2xl font-bold tracking-tight">Popular uses</h2>
+          <ul className="mt-5 space-y-3">
+            {tool.uses.map((u) => (
+              <li key={u} className="flex gap-3 text-muted">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="mt-0.5 shrink-0 text-accent">
+                  <path d="m5 12.5 4.5 4.5L19 7.5" />
+                </svg>
+                {u}
+              </li>
+            ))}
+          </ul>
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Frequently asked questions</h2>
