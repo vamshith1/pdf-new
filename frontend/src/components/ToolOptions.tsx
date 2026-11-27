@@ -15,6 +15,7 @@ export const defaultOptions: Record<ToolSlug, Options> = {
   "pdf-to-jpg": { quality: "normal", pageSelection: "all", pages: "" },
   "protect-pdf": { password: "", confirm: "" },
   "unlock-pdf": { password: "" },
+  "edit-pdf": {},
   "watermark-pdf": { text: "CONFIDENTIAL", layout: "diagonal", size: "medium", opacity: "medium" },
   "add-page-numbers": { position: "bottom-center", format: "number", start: "1", skipFirst: "no" },
   "pdf-to-text": {},

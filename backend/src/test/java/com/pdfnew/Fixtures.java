@@ -152,4 +152,46 @@ public final class Fixtures {
         doc.save(out);
         return out.toByteArray();
     }
+
+    /** One page with an AcroForm: a text field "name" and a checkbox "agree". */
+    public static byte[] formPdf() throws IOException {
+        try (PDDocument doc = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            doc.addPage(page);
+            var form = new org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm(doc);
+            doc.getDocumentCatalog().setAcroForm(form);
+            var resources = new org.apache.pdfbox.pdmodel.PDResources();
+            resources.put(org.apache.pdfbox.cos.COSName.getPDFName("Helv"),
+                    new org.apache.pdfbox.pdmodel.font.PDType1Font(org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName.HELVETICA));
+            form.setDefaultResources(resources);
+            form.setDefaultAppearance("/Helv 0 Tf 0 g");
+
+            var name = new org.apache.pdfbox.pdmodel.interactive.form.PDTextField(form);
+            name.setPartialName("name");
+            var nameWidget = name.getWidgets().getFirst();
+            nameWidget.setRectangle(new PDRectangle(72, 700, 200, 20));
+            nameWidget.setPage(page);
+            page.getAnnotations().add(nameWidget);
+
+            var agree = new org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox(form);
+            agree.setPartialName("agree");
+            var box = agree.getWidgets().getFirst();
+            box.setRectangle(new PDRectangle(72, 660, 14, 14));
+            box.setPage(page);
+            var on = new org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceDictionary();
+            var normal = new org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceEntry(new org.apache.pdfbox.cos.COSDictionary());
+            var states = normal.getCOSObject();
+            states.setItem(org.apache.pdfbox.cos.COSName.getPDFName("Yes"), new org.apache.pdfbox.pdmodel.common.PDStream(doc).getCOSObject());
+            states.setItem(org.apache.pdfbox.cos.COSName.Off, new org.apache.pdfbox.pdmodel.common.PDStream(doc).getCOSObject());
+            on.setNormalAppearance(normal);
+            box.setAppearance(on);
+            box.setAppearanceState("Off");
+            page.getAnnotations().add(box);
+
+            form.getFields().add(name);
+            form.getFields().add(agree);
+            name.setValue("");
+            return bytes(doc);
+        }
+    }
 }

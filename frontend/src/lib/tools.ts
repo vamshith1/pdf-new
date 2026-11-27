@@ -12,6 +12,7 @@ export type ToolSlug =
   | "pdf-to-jpg"
   | "protect-pdf"
   | "unlock-pdf"
+  | "edit-pdf"
   | "watermark-pdf"
   | "add-page-numbers"
   | "pdf-to-text"
@@ -445,6 +446,33 @@ export const tools: Tool[] = [
     uses: ["Make a scanned Hindi or English document searchable", "Copy text from a scanned PDF or photo PDF", "Prepare a scanned PDF for converting to Word", "Search inside old scanned notes and books"],
     seoTitle: "OCR PDF Free – Hindi & English Scanned PDF to Text",
     seoDescription: "Free online OCR for scanned PDFs in English and Hindi. Make text searchable and copyable. No sign-up.",
+  },
+  {
+    slug: "edit-pdf",
+    apiId: "edit",
+    name: "Edit PDF",
+    summary: "Add text, signatures, images, white-out and highlights, or fill in forms.",
+    heading: "Edit PDF",
+    subheading: "Type on your PDF, sign it, add images, cover mistakes and fill in forms.",
+    category: "edit",
+    accept: PDF,
+    acceptLabel: "a PDF file",
+    multiple: false,
+    minFiles: 1,
+    action: "Save changes",
+    next: ["compress-pdf", "protect-pdf", "merge-pdf"],
+    steps: ["Choose a PDF.", "Click on a page to add text, or pick Sign, Image, White-out or Highlight.", "Click Save changes and download your edited PDF."],
+    faq: [
+      { q: "Can I change the existing text in the PDF?", a: "Not directly. Cover it with White-out and type the new text on top, or convert the PDF to Word, edit it there and convert it back." },
+      { q: "How do I sign a PDF?", a: "Click Sign, then draw your signature, type your name or upload a photo of it. Click on the page to place it and drag the corner to resize." },
+      { q: "Can I fill in PDF forms?", a: "Yes. If the PDF has fillable fields, they appear as boxes you can type into or tick." },
+      { q: "Does white-out delete the text underneath?", a: "No. It covers the text so it can't be seen, but the original text is still inside the file and can be found by copying or searching. Don't use it to hide passwords, ID numbers or other private details." },
+      { q: "Does it add a watermark?", a: "No. Your edited PDF has no watermark and no easypdf branding." },
+      { q: "Which languages can I type?", a: "English and other languages written with the Latin alphabet. Hindi and other scripts aren't supported in text boxes yet." },
+    ],
+    uses: ["Sign a form or agreement without printing it", "Fill in an application form on your phone or PC", "Fix a typo by covering it with white-out and typing over it", "Add a stamp, logo or photo to a document"],
+    seoTitle: "Edit PDF Free – Add Text, Sign & Fill PDF Online",
+    seoDescription: "Edit PDF online for free: add text, sign, insert images, white-out and highlight, and fill in PDF forms. No sign-up, no watermark.",
   },
   {
     slug: "watermark-pdf",

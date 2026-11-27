@@ -65,6 +65,8 @@ export function ToolGlyph({ slug, ...p }: P & { slug: ToolSlug }) {
       return (<svg {...base(p)}><rect x="3" y="3" width="13" height="13" rx="2" /><path d="m3 13 4-4 4 4M20 8v12H8" /></svg>);
     case "ocr-pdf":
       return (<svg {...base(p)}><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" /><path d="M8 10h8M8 14h5" /></svg>);
+    case "edit-pdf":
+      return (<svg {...base(p)}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4" /><path d="M14 3v5h5" /><path d="m19.5 12.5 2 2-6 6H13.5v-2Z" /></svg>);
     case "watermark-pdf":
       return (<svg {...base(p)}><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z" /></svg>);
     case "add-page-numbers":

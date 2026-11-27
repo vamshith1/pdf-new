@@ -36,6 +36,9 @@ public class ToolController {
     public record Limits(long maxFileSizeMb, long maxTotalSizeMb, int maxFiles, long fileTtlMinutes) {
     }
 
+    /** Options that carry JSON from the editor, so they may be longer than plain settings. */
+    private static final Set<String> LARGE_OPTIONS = Set.of("edits", "fields");
+
     private final ToolRegistry registry;
     private final JobService jobs;
     private final AppProperties props;
@@ -74,7 +77,8 @@ public class ToolController {
         List<MultipartFile> files = request.getFiles("files");
         Map<String, String> options = new HashMap<>();
         request.getParameterMap().forEach((k, v) -> {
-            if (v.length > 0 && k.length() <= 40 && v[0].length() <= 2000) {
+            int maxLength = LARGE_OPTIONS.contains(k) ? 300_000 : 2000;
+            if (v.length > 0 && k.length() <= 40 && v[0].length() <= maxLength) {
                 options.put(k, v[0]);
             }
         });

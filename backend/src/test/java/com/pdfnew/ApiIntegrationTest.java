@@ -364,7 +364,7 @@ class ApiIntegrationTest {
     void unknownJobIs404AndMetaEndpointsWork() throws Exception {
         mvc.perform(get("/api/v1/jobs/does-not-exist")).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail").value("This file has expired or doesn't exist."));
-        mvc.perform(get("/api/v1/tools")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(16));
+        mvc.perform(get("/api/v1/tools")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(17));
         mvc.perform(get("/api/v1/limits")).andExpect(jsonPath("$.fileTtlMinutes").value(60));
         mvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }
@@ -374,5 +374,71 @@ class ApiIntegrationTest {
         mvc.perform(get("/api/v1/tools"))
                 .andExpect(header().string("X-Content-Type-Options", "nosniff"))
                 .andExpect(header().string("Cache-Control", "no-store"));
+    }
+
+    // ------------------------------------------------------------- edit PDF
+
+    @Test
+    void editAddsTextWhiteoutHighlightAndSignature() throws Exception {
+        String edits = """
+                [{"page":1,"type":"whiteout","x":0.1,"y":0.1,"w":0.3,"h":0.05},
+                 {"page":1,"type":"text","x":0.12,"y":0.11,"text":"Signed by Asha\\nLine two","size":16,"color":"#1d4ed8","bold":true},
+                 {"page":2,"type":"highlight","x":0.1,"y":0.1,"w":0.5,"h":0.03},
+                 {"page":2,"type":"image","x":0.5,"y":0.7,"w":0.3,"h":0.1,"image":1}]""";
+        String body = run(job("edit", pdf("form.pdf", Fixtures.textPdf(2, 0)),
+                new MockMultipartFile("files", "signature.png", "image/png", Fixtures.image(300, 100, "png"))),
+                Map.of("edits", edits));
+        assertThat((String) JsonPath.read(body, "$.status")).as(body).isEqualTo("DONE");
+        assertThat((String) JsonPath.read(body, "$.result.filename")).isEqualTo("form_edited.pdf");
+        byte[] out = mvc.perform(get((String) JsonPath.read(body, "$.result.downloadUrl"))).andReturn().getResponse()
+                .getContentAsByteArray();
+        List<String> texts = Fixtures.pageTexts(out);
+        assertThat(texts.get(0)).contains("Signed by Asha").contains("Line two").contains("Hello page 1");
+        try (var doc = Fixtures.load(out)) {
+            assertThat(doc.getPage(1).getResources().getXObjectNames()).isNotEmpty();
+        }
+    }
+
+    @Test
+    void editPlacesTextWhereTheReaderSeesItOnRotatedPages() throws Exception {
+        // Text near the top-left of the page as displayed, on a page with /Rotate 90
+        String edits = """
+                [{"page":1,"type":"text","x":0.05,"y":0.05,"text":"TOPLEFT","size":12}]""";
+        byte[] out = runAndDownload(job("edit", pdf("r.pdf", Fixtures.textPdf(1, 90))), Map.of("edits", edits));
+        try (var doc = Fixtures.load(out)) {
+            var stripper = new org.apache.pdfbox.text.PDFTextStripperByArea();
+            // Visual page is 842 x 595 (A4 landscape); the text should sit in its top-left area
+            stripper.addRegion("topLeft", new java.awt.geom.Rectangle2D.Float(0, 0, 200, 80));
+            stripper.extractRegions(doc.getPage(0));
+            assertThat(stripper.getTextForRegion("topLeft")).contains("TOPLEFT");
+        }
+    }
+
+    @Test
+    void editFillsFormFields() throws Exception {
+        byte[] out = runAndDownload(job("edit", pdf("f.pdf", Fixtures.formPdf())),
+                Map.of("fields", "{\"name\":\"Asha Rao\",\"agree\":\"true\"}"));
+        try (var doc = Fixtures.load(out)) {
+            var form = doc.getDocumentCatalog().getAcroForm();
+            assertThat(form.getField("name").getValueAsString()).isEqualTo("Asha Rao");
+            assertThat(((org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox) form.getField("agree")).isChecked()).isTrue();
+        }
+    }
+
+    @Test
+    void editRejectsBadInput() throws Exception {
+        String nothing = run(job("edit", pdf("a.pdf", Fixtures.textPdf(1, 0))), Map.of());
+        assertThat((String) JsonPath.read(nothing, "$.error")).contains("Add some text");
+        String badPage = run(job("edit", pdf("a.pdf", Fixtures.textPdf(1, 0))),
+                Map.of("edits", "[{\"page\":3,\"type\":\"text\",\"x\":0.1,\"y\":0.1,\"text\":\"x\"}]"));
+        assertThat((String) JsonPath.read(badPage, "$.error")).contains("has 1 pages");
+        String noImage = run(job("edit", pdf("a.pdf", Fixtures.textPdf(1, 0))),
+                Map.of("edits", "[{\"page\":1,\"type\":\"image\",\"x\":0.1,\"y\":0.1,\"w\":0.2,\"h\":0.1,\"image\":1}]"));
+        assertThat((String) JsonPath.read(noImage, "$.error")).contains("missing");
+        String garbage = run(job("edit", pdf("a.pdf", Fixtures.textPdf(1, 0))), Map.of("edits", "not json"));
+        assertThat((String) JsonPath.read(garbage, "$.error")).contains("couldn't be read");
+        String hindi = run(job("edit", pdf("a.pdf", Fixtures.textPdf(1, 0))),
+                Map.of("edits", "[{\"page\":1,\"type\":\"text\",\"x\":0.1,\"y\":0.1,\"text\":\"नमस्ते\"}]"));
+        assertThat((String) JsonPath.read(hindi, "$.error")).contains("aren't supported yet");
     }
 }

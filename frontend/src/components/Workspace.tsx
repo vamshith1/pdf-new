@@ -13,6 +13,7 @@ import Dropzone, { matchesAccept, useFilePicker } from "./Dropzone";
 import FileGrid, { type FileItem } from "./FileGrid";
 import { AlertIcon, ArrowRightIcon, CheckIcon, ClockIcon, DownloadIcon, RotateCcwIcon, RotateCwIcon, ShieldIcon, TrashIcon } from "./Icons";
 import PageGrid, { type PageItem } from "./PageGrid";
+import PdfEditor, { changeCount, emptyDoc, hasUnsupportedText, toUpload, type EditorDoc } from "./PdfEditor";
 import { ToolTile } from "./ToolCard";
 import ToolOptions, { defaultOptions, noOptionsText, toApiOptions, validate, type Options } from "./ToolOptions";
 import { Button, Spinner } from "./ui";
@@ -31,12 +32,14 @@ const MAX_PREVIEW_PAGES = 200;
 export default function Workspace({ tool }: { tool: Tool }) {
   const router = useRouter();
   const pageMode = tool.slug === "organize-pdf" || tool.slug === "rotate-pdf";
+  const editMode = tool.slug === "edit-pdf";
 
   const [phase, setPhase] = useState<Phase>({ name: "select" });
   const [items, setItems] = useState<FileItem[]>([]);
   const [pages, setPages] = useState<PageItem[]>([]);
   const [options, setOptions] = useState<Options>(defaultOptions[tool.slug]);
   const [notice, setNotice] = useState<string | null>(null);
+  const [editDoc, setEditDoc] = useState<EditorDoc>(emptyDoc);
   const abort = useRef<AbortController | null>(null);
   const pdfDoc = useRef<PdfInfo | null>(null);
 
@@ -147,6 +150,7 @@ export default function Workspace({ tool }: { tool: Tool }) {
     setItems([]);
     setPages([]);
     setOptions(defaultOptions[tool.slug]);
+    setEditDoc(emptyDoc);
     setNotice(null);
     setPhase({ name: "select" });
   }
@@ -164,20 +168,25 @@ export default function Workspace({ tool }: { tool: Tool }) {
   else if (pageMode && pages.length && !kept.length) blocker = "Keep at least one page.";
   else if (tool.slug === "rotate-pdf" && pages.length && !pages.some((p) => p.rotation)) blocker = "Rotate at least one page.";
   else if (pageMode && !pages.length) blocker = "Loading pages…";
+  else if (editMode && hasUnsupportedText(editDoc)) blocker = "Some text uses characters that can't be added yet (shown in red). Use English letters.";
+  else if (editMode && !changeCount(editDoc)) blocker = "Add text, a signature or another change first.";
 
   async function run() {
     if (blocker) return;
     const controller = new AbortController();
     abort.current = controller;
-    const apiOptions =
-      tool.slug === "rotate-pdf"
+    const upload = editMode ? toUpload(editDoc) : null;
+    const apiOptions = upload
+      ? { edits: upload.edits, fields: upload.fields }
+      : tool.slug === "rotate-pdf"
         ? { rotations: pages.map((p) => p.rotation).join(",") }
         : tool.slug === "organize-pdf"
           ? { order: kept.map((p) => p.n).join(","), rotations: kept.map((p) => p.rotation).join(",") }
           : toApiOptions(tool.slug, options);
     try {
       setPhase({ name: "uploading", progress: 0 });
-      const job = await startJob(tool.apiId, items.map((i) => i.file), apiOptions,
+      const files = upload ? [items[0].file, ...upload.files] : items.map((i) => i.file);
+      const job = await startJob(tool.apiId, files, apiOptions,
         (progress) => setPhase({ name: "uploading", progress }), controller.signal);
       setPhase({ name: "processing" });
       const finished = await waitForJob(job.id, controller.signal);
@@ -246,6 +255,42 @@ export default function Workspace({ tool }: { tool: Tool }) {
     }
 
     // phase: edit
+    if (editMode) {
+      const count = changeCount(editDoc);
+      return (
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+          <section aria-label="Editor" className="min-w-0">
+            {locked ? <LockedNotice /> : items[0] && <PdfEditor file={items[0].file} doc={editDoc} setDoc={setEditDoc} />}
+          </section>
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <Panel>
+              <div className="flex items-center gap-3">
+                <ToolTile tool={tool} size={36} />
+                <h2 className="text-lg font-semibold">{tool.name}</h2>
+              </div>
+              <p className="mt-4 truncate text-sm font-medium">{items[0]?.file.name}</p>
+              <p className="mt-1 text-sm text-muted">
+                {count ? `${count} ${count === 1 ? "change" : "changes"} ready to save.` : "Pick a tool above the page to start."}
+              </p>
+              <ul className="mt-4 space-y-1.5 text-xs leading-relaxed text-muted">
+                <li><b className="text-text">Text</b>: click where it should go and type.</li>
+                <li><b className="text-text">Sign</b>: draw, type or upload, then click to place.</li>
+                <li><b className="text-text">White-out</b>: cover a mistake, then type over it.</li>
+                <li>Forms with fillable boxes can be typed into directly.</li>
+              </ul>
+              <Button size="lg" className="mt-6 w-full" disabled={!!blocker} onClick={run}>
+                {tool.action} <ArrowRightIcon width={18} height={18} />
+              </Button>
+              {blocker && <p className="mt-2 text-center text-xs text-muted">{blocker}</p>}
+              <button type="button" onClick={reset} className="mt-4 w-full text-center text-sm text-muted hover:text-text">
+                Choose a different file
+              </button>
+            </Panel>
+          </aside>
+        </div>
+      );
+    }
+
     const hasOptions = !pageMode && !["merge-pdf"].includes(tool.slug);
     return (
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
@@ -445,6 +490,10 @@ function Result({
   } else if (tool.slug === "organize-pdf") {
     headline = "Your PDF has been reorganised";
     detail = `${stats.pages} pages${Number(stats.removed) ? `, ${stats.removed} removed` : ""}`;
+  } else if (tool.slug === "edit-pdf") {
+    headline = "Your PDF has been edited";
+    const changes = Number(stats.changes ?? 0) + Number(stats.fields ?? 0);
+    detail = `${changes} ${changes === 1 ? "change" : "changes"} saved`;
   } else if (tool.slug === "watermark-pdf") {
     headline = "Your watermark has been added";
     detail = `${stats.pages} ${Number(stats.pages) === 1 ? "page" : "pages"}`;
